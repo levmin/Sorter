@@ -38,12 +38,27 @@ struct record_type
    record_type()    {
       std::memset(m_record, 0, RECORD_LENGTH);
    }
-   
-   const record_type& operator=(const record_type& val)   {
+
+   record_type(const record_type& val) {
       std::memcpy(m_record, val.m_record, RECORD_LENGTH);
+   }
+
+   record_type(const record_type&& val) noexcept {
+      std::memcpy(m_record, val.m_record, RECORD_LENGTH);
+   }
+
+   const record_type& operator=(const record_type& val)   {
+      if (this != &val)
+         std::memcpy(m_record, val.m_record, RECORD_LENGTH);
       return *this;
    }
    
+   const record_type& operator=(const record_type&& val) noexcept {
+      if (this != &val)
+         std::memcpy(m_record, val.m_record, RECORD_LENGTH);
+      return *this;
+   }
+
    bool operator< (const record_type& val) const   {
       return std::memcmp((const char *)m_record, (const char *)val.m_record, RECORD_LENGTH) < 0;
    }
@@ -51,6 +66,7 @@ struct record_type
    bool operator<= (const record_type& val) const   {
       return std::memcmp((const char *)m_record, (const char *)val.m_record, RECORD_LENGTH) <= 0;
    }
+
 };
 
 using CRecordArray = std::vector<record_type>;
